@@ -23,10 +23,25 @@ import {MatRadioModule} from '@angular/material/radio';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-
-
+import {MatNativeDateModule, MAT_DATE_LOCALE} from '@angular/material/core';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatSelectModule} from '@angular/material/select';
+import {MatTableModule} from '@angular/material/table';
+// Paginación
+import {MatPaginatorIntl, MatPaginatorModule} from '@angular/material/paginator';
+import { getSpanishPaginatorIntl } from './shared/spanish-paginator-intl';
+// IMPORTANTE: añade el módulo de Sidenav
+import { MatSidenavModule } from '@angular/material/sidenav';
 //Ngx-cookie-service
 import { CookieService } from 'ngx-cookie-service';
+// Third Party Modules
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
+import { HomeScreenComponent } from './screens/home-screen/home-screen.component';
+import { AdminScreenComponent } from './screens/admin-screen/admin-screen.component';
+import { AlumnosScreenComponent } from './screens/alumnos-screen/alumnos-screen.component';
+import { MaestrosScreenComponent } from './screens/maestros-screen/maestros-screen.component';
+import { NavbarUserComponent } from './partials/navbar-user/navbar-user.component';
+import { SidebarComponent } from './partials/sidebar/sidebar.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +52,13 @@ import { CookieService } from 'ngx-cookie-service';
     DashboardLayoutComponent,
     RegistroAdminComponent,
     RegistroAlumnosComponent,
-    RegistroMaestrosComponent
+    RegistroMaestrosComponent,
+    HomeScreenComponent,
+    AdminScreenComponent,
+    AlumnosScreenComponent,
+    MaestrosScreenComponent,
+    NavbarUserComponent,
+    SidebarComponent
   ],
   imports: [
     BrowserModule,
@@ -52,10 +73,20 @@ import { CookieService } from 'ngx-cookie-service';
     MatRadioModule,
     MatFormFieldModule,
     MatInputModule,
+    NgxMaskDirective,
     MatDatepickerModule,
+    MatNativeDateModule,
+    MatCheckboxModule,
+    MatSelectModule,
+    MatSidenavModule,
+    MatTableModule,
+    MatPaginatorModule
   ],
   providers: [
-    CookieService
+    CookieService,
+    { provide: MAT_DATE_LOCALE, useValue: 'es-MX' },
+    { provide: MatPaginatorIntl, useValue: getSpanishPaginatorIntl() },
+    provideNgxMask()
   ],
   bootstrap: [AppComponent]
 })

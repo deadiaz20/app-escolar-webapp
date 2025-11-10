@@ -1,8 +1,10 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FacadeService } from './facade.service';
 import { ErrorsService } from './tools/errors.service';
 import { ValidatorService } from './tools/validator.service';
+import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -20,31 +22,31 @@ export class AlumnosService {
     private facadeService: FacadeService
   ) { }
 
-  public esquemaAlumnos(){
+  public esquemaAlumno(){
     return {
       'rol':'',
-      'clave_alumno': '',
+      'matricula': '',
       'first_name': '',
       'last_name': '',
       'email': '',
       'password': '',
       'confirmar_password': '',
-      'telefono': '',
-      'CURP': '',
+      'fecha_nacimiento': '',
+      'curp': '',
+      'rfc': '',
       'edad': '',
-      'semestre': ''
+      'telefono': '',
+      'ocupacion': '',
     }
   }
 
-  // Validaciones del formulario de registro de alumno
   //Validación para el formulario
   public validarAlumno(data: any, editar: boolean){
     console.log("Validando alumno... ", data);
-    let error: any = {};
+    let error: any = [];
 
-    //Validaciones comunes
-    if(!this.validatorService.required(data["clave_alumno"])){
-      error["clave_alumno"] = this.errorService.required;
+    if(!this.validatorService.required(data["matricula"])){
+      error["matricula"] = this.errorService.required;
     }
 
     if(!this.validatorService.required(data["first_name"])){
@@ -73,14 +75,28 @@ export class AlumnosService {
       }
     }
 
-    if(!this.validatorService.required(data["CURP"])){
-      error["CURP"] = this.errorService.required;
-    }else if(!this.validatorService.min(data["CURP"], 18)){
-      error["CURP"] = this.errorService.min(18);
-      alert("La longitud de caracteres deL CURP es menor, deben ser 18");
-    }else if(!this.validatorService.max(data["rfc"], 18)){
-      error["CURP"] = this.errorService.max(18);
-      alert("La longitud de caracteres deL CURP es mayor, deben ser 18");
+    if(!this.validatorService.required(data["fecha_nacimiento"])){
+      error["fecha_nacimiento"] = this.errorService.required;
+    }
+
+    if(!this.validatorService.required(data["curp"])){
+      error["curp"] = this.errorService.required;
+    }else if(!this.validatorService.min(data["curp"], 18)){
+      error["curp"] = this.errorService.min(18);
+      alert("La longitud de caracteres de la CURP es menor, deben ser 18");
+    }else if(!this.validatorService.max(data["curp"], 18)){
+      error["curp"] = this.errorService.max(18);
+      alert("La longitud de caracteres de la CURP es mayor, deben ser 18");
+    }
+
+    if(!this.validatorService.required(data["rfc"])){
+      error["rfc"] = this.errorService.required;
+    }else if(!this.validatorService.min(data["rfc"], 12)){
+      error["rfc"] = this.errorService.min(12);
+      alert("La longitud de caracteres deL RFC es menor, deben ser 12");
+    }else if(!this.validatorService.max(data["rfc"], 13)){
+      error["rfc"] = this.errorService.max(13);
+      alert("La longitud de caracteres deL RFC es mayor, deben ser 13");
     }
 
     if(!this.validatorService.required(data["edad"])){
@@ -95,13 +111,25 @@ export class AlumnosService {
       error["telefono"] = this.errorService.required;
     }
 
-    if(!this.validatorService.required(data["semestre"])){
-      error["semestre"] = this.errorService.required;
+    if(!this.validatorService.required(data["ocupacion"])){
+      error["ocupacion"] = this.errorService.required;
     }
 
     //Return arreglo
     return error;
-
   }
 
+  //Aquí van los servicios HTTP
+  //Servicio para registrar un nuevo alumno
+  public registrarAlumno (data: any): Observable <any>{
+    // Verificamos si existe el token de sesión
+    const token = this.facadeService.getSessionToken();
+    let headers: HttpHeaders;
+    if (token) {
+      headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token });
+    } else {
+      headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    }
+    return this.http.post<any>(`${environment.url_api}/alumnos/`, data, { headers });
+  }
 }
